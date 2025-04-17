@@ -57,6 +57,7 @@ class BarcodeScanner extends StatelessWidget {
         appBarTitle: appBarTitle,
         centerTitle: centerTitle,
         delayMillis: delayMillis,
+        barcodeAppBar: barcodeAppBar,
       );
     } else {
       /// Scan Android and ios barcode scanner with flutter_barcode_scanner
