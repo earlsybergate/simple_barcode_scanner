@@ -58,8 +58,6 @@ class WindowBarcodeScanner extends StatelessWidget {
             if (snapshot.hasData && snapshot.data != null) {
               return Webview(
                 controller,
-                height: 500,
-                width: 500,
                 permissionRequested: (url, permissionKind, isUserInitiated) =>
                     _onPermissionRequested(
                   url: url,
