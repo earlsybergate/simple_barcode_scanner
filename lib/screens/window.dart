@@ -169,16 +169,17 @@ class WindowBarcodeScanner extends StatelessWidget {
             ? Text(barcodeAppBar!.appBarTitle!)
             : null,
         centerTitle: barcodeAppBar?.centerTitle ?? false,
-        leading: barcodeAppBar!.enableBackButton == true
-            ? TextButton(
-                onPressed: () {
-                  /// send close event to web-view
-                  controller.postWebMessage(json.encode({"event": "close"}));
-                  Navigator.pop(context);
-                },
-                child: Text(cancelButtonText),
-              )
-            : null,
+        actions: [
+          if (barcodeAppBar!.enableBackButton == true)
+            TextButton(
+              onPressed: () {
+                /// send close event to web-view
+                controller.postWebMessage(json.encode({"event": "close"}));
+                Navigator.pop(context);
+              },
+              child: Text(cancelButtonText),
+            ),
+        ],
         automaticallyImplyLeading: false,
       );
     }
