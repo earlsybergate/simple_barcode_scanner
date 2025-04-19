@@ -49,7 +49,7 @@ class WindowBarcodeScanner extends StatelessWidget {
     });
 
     return Scaffold(
-      appBar: _buildAppBar(controller, context),
+      appBar: _buildAppBar(controller, context, cancelButtonText),
       body: FutureBuilder<bool>(
           future: initPlatformState(
             controller: controller,
@@ -155,7 +155,11 @@ class WindowBarcodeScanner extends StatelessWidget {
     return true;
   }
 
-  _buildAppBar(WebviewController controller, BuildContext context) {
+  _buildAppBar(
+    WebviewController controller,
+    BuildContext context,
+    String cancelButtonText,
+  ) {
     if (appBarTitle == null && barcodeAppBar == null) {
       return null;
     }
@@ -166,14 +170,13 @@ class WindowBarcodeScanner extends StatelessWidget {
             : null,
         centerTitle: barcodeAppBar?.centerTitle ?? false,
         leading: barcodeAppBar!.enableBackButton == true
-            ? IconButton(
+            ? TextButton(
                 onPressed: () {
                   /// send close event to web-view
                   controller.postWebMessage(json.encode({"event": "close"}));
                   Navigator.pop(context);
                 },
-                icon: barcodeAppBar?.backButtonIcon ??
-                    const Icon(Icons.arrow_back_ios),
+                child: Text(cancelButtonText),
               )
             : null,
         automaticallyImplyLeading: false,
