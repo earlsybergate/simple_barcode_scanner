@@ -66,6 +66,7 @@ class WindowBarcodeScanner extends StatelessWidget {
                   context: context,
                   isPermissionGranted: isPermissionGranted,
                 ),
+
               );
             } else if (snapshot.hasError) {
               return Center(
