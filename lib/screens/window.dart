@@ -45,6 +45,7 @@ class WindowBarcodeScanner extends StatefulWidget {
 class _WindowBarcodeScannerState extends State<WindowBarcodeScanner> {
   late final WebviewController controller;
   bool isPermissionGranted = false;
+  bool isWebViewInitialized = false;
 
   @override
   void initState() {
@@ -56,39 +57,29 @@ class _WindowBarcodeScannerState extends State<WindowBarcodeScanner> {
       debugPrint("Permission is $granted");
       isPermissionGranted = granted;
     });
+
+    initPlatformState(controller: controller);
   }
+
   @override
   Widget build(BuildContext context) {
 
     return Scaffold(
       appBar: _buildAppBar(controller, context, widget.cancelButtonText),
-      body: FutureBuilder<bool>(
-          future: initPlatformState(
-            controller: controller,
-          ),
-          builder: (context, snapshot) {
-            if (snapshot.hasData && snapshot.data != null) {
-              return Webview(
-                controller,
-                permissionRequested: (url, permissionKind, isUserInitiated) =>
-                    _onPermissionRequested(
-                  url: url,
-                  kind: permissionKind,
-                  isUserInitiated: isUserInitiated,
-                  context: context,
-                  isPermissionGranted: isPermissionGranted,
-                ),
+      body: isWebViewInitialized ? Webview(
+        controller,
+        permissionRequested: (url, permissionKind, isUserInitiated) =>
+            _onPermissionRequested(
+              url: url,
+              kind: permissionKind,
+              isUserInitiated: isUserInitiated,
+              context: context,
+              isPermissionGranted: isPermissionGranted,
+            ),
 
-              );
-            } else if (snapshot.hasError) {
-              return Center(
-                child: Text(snapshot.error.toString()),
-              );
-            }
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
-          }),
+      ) : Center(
+        child: CircularProgressIndicator(),
+      ),
     );
   }
 
@@ -142,7 +133,7 @@ class _WindowBarcodeScannerState extends State<WindowBarcodeScanner> {
     return Uri.file(assetsDirectory).toString();
   }
 
-  Future<bool> initPlatformState(
+  Future<void> initPlatformState(
       {required WebviewController controller}) async {
     String? barcodeNumber;
 
@@ -163,9 +154,12 @@ class _WindowBarcodeScannerState extends State<WindowBarcodeScanner> {
         }
       });
     } catch (e) {
-      rethrow;
+      debugPrint("Error: $e");
     }
-    return true;
+
+    setState(() {
+      isWebViewInitialized = true;
+    });
   }
 
   _buildAppBar(
