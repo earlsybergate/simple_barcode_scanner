@@ -10,7 +10,7 @@ import 'package:webview_windows/webview_windows.dart';
 
 import '../barcode_appbar.dart';
 
-class WindowBarcodeScanner extends StatelessWidget {
+class WindowBarcodeScanner extends StatefulWidget {
   final String lineColor;
   final String cancelButtonText;
   final bool isShowFlashIcon;
@@ -39,17 +39,29 @@ class WindowBarcodeScanner extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
-    WebviewController controller = WebviewController();
-    bool isPermissionGranted = false;
+  State<WindowBarcodeScanner> createState() => _WindowBarcodeScannerState();
+}
+
+class _WindowBarcodeScannerState extends State<WindowBarcodeScanner> {
+  late final WebviewController controller;
+  bool isPermissionGranted = false;
+
+  @override
+  void initState() {
+    super.initState();
+
+    controller = WebviewController();
 
     _checkCameraPermission().then((granted) {
       debugPrint("Permission is $granted");
       isPermissionGranted = granted;
     });
+  }
+  @override
+  Widget build(BuildContext context) {
 
     return Scaffold(
-      appBar: _buildAppBar(controller, context, cancelButtonText),
+      appBar: _buildAppBar(controller, context, widget.cancelButtonText),
       body: FutureBuilder<bool>(
           future: initPlatformState(
             controller: controller,
@@ -146,7 +158,7 @@ class WindowBarcodeScanner extends StatelessWidget {
               event['data'].isNotEmpty &&
               barcodeNumber == null) {
             barcodeNumber = event['data'];
-            onScanned(barcodeNumber!);
+            widget.onScanned(barcodeNumber!);
           }
         }
       });
@@ -161,17 +173,17 @@ class WindowBarcodeScanner extends StatelessWidget {
     BuildContext context,
     String cancelButtonText,
   ) {
-    if (appBarTitle == null && barcodeAppBar == null) {
+    if (widget.appBarTitle == null && widget.barcodeAppBar == null) {
       return null;
     }
-    if (barcodeAppBar != null) {
+    if (widget.barcodeAppBar != null) {
       return AppBar(
-        title: barcodeAppBar?.appBarTitle != null
-            ? Text(barcodeAppBar!.appBarTitle!)
+        title: widget.barcodeAppBar?.appBarTitle != null
+            ? Text(widget.barcodeAppBar!.appBarTitle!)
             : null,
-        centerTitle: barcodeAppBar?.centerTitle ?? false,
+        centerTitle: widget.barcodeAppBar?.centerTitle ?? false,
         actions: [
-          if (barcodeAppBar!.enableBackButton == true)
+          if (widget.barcodeAppBar!.enableBackButton == true)
             TextButton(
               onPressed: () {
                 /// send close event to web-view
@@ -185,8 +197,8 @@ class WindowBarcodeScanner extends StatelessWidget {
       );
     }
     return AppBar(
-      title: Text(appBarTitle ?? kScanPageTitle),
-      centerTitle: centerTitle,
+      title: Text(widget.appBarTitle ?? kScanPageTitle),
+      centerTitle: widget.centerTitle,
       leading: IconButton(
         onPressed: () {
           /// send close event to web-view
