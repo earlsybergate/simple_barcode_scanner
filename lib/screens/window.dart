@@ -157,7 +157,22 @@ class _WindowBarcodeScannerState extends State<WindowBarcodeScanner> {
     try {
       final assetsDirectory = p.join(p.dirname(Platform.resolvedExecutable),
           'data', 'flutter_assets', asset);
-      return Uri.file(assetsDirectory).toString();
+      logs += 'Assets directory: $assetsDirectory\n';
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(logs),
+        ),
+      );
+
+      final assetFile = Uri.file(assetsDirectory).toString();
+      logs += 'Asset file url: $assetFile\n';
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(logs),
+        ),
+      );
+
+      return assetFile;
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
