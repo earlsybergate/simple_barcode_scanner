@@ -47,6 +47,9 @@ class _WindowBarcodeScannerState extends State<WindowBarcodeScanner> {
   bool isPermissionGranted = false;
   bool isWebViewInitialized = false;
 
+
+  String logs = "";
+
   @override
   void initState() {
     super.initState();
@@ -65,18 +68,21 @@ class _WindowBarcodeScannerState extends State<WindowBarcodeScanner> {
 
     return Scaffold(
       appBar: _buildAppBar(controller, context, widget.cancelButtonText),
-      body: isWebViewInitialized ? Webview(
-        controller,
-        permissionRequested: (url, permissionKind, isUserInitiated) =>
-            _onPermissionRequested(
-              url: url,
-              kind: permissionKind,
-              isUserInitiated: isUserInitiated,
-              context: context,
-              isPermissionGranted: isPermissionGranted,
-            ),
-
-      ) : Center(
+      // body: isWebViewInitialized ? Webview(
+      //   controller,
+      //   permissionRequested: (url, permissionKind, isUserInitiated) =>
+      //       _onPermissionRequested(
+      //         url: url,
+      //         kind: permissionKind,
+      //         isUserInitiated: isUserInitiated,
+      //         context: context,
+      //         isPermissionGranted: isPermissionGranted,
+      //       ),
+      //
+      // ) : Center(
+      //   child: CircularProgressIndicator(),
+      // ),
+      body: Center(
         child: CircularProgressIndicator(),
       ),
     );
@@ -85,11 +91,9 @@ class _WindowBarcodeScannerState extends State<WindowBarcodeScanner> {
   Future<bool> _checkCameraPermission() async {
     final permission = await Permission.camera.request().isGranted;
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('Camera Permission: $permission'),
-      ),
-    );
+    logs += permission
+        ? "Camera permission granted"
+        : "Camera permission denied";
 
     return permission;
   }
@@ -145,8 +149,11 @@ class _WindowBarcodeScannerState extends State<WindowBarcodeScanner> {
 
     try {
       await controller.initialize();
+      logs += 'Webview Controller initialized\n';
+
       await controller
           .loadUrl(getAssetFileUrl(asset: PackageConstant.barcodeFilePath));
+      logs += 'Webview loaded url: ${getAssetFileUrl(asset: PackageConstant.barcodeFilePath)}\n';
 
       /// Listen to web to receive barcode
       controller.webMessage.listen((event) {
@@ -159,13 +166,21 @@ class _WindowBarcodeScannerState extends State<WindowBarcodeScanner> {
           }
         }
       });
+      logs += 'Webview message listener added\n';
     } catch (e) {
-      debugPrint("Error: $e");
+      logs += 'Error initializing webview: $e\n';
     }
 
     setState(() {
       isWebViewInitialized = true;
     });
+    logs += 'Webview initialized\n';
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(logs),
+      ),
+    );
   }
 
   _buildAppBar(
