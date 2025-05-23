@@ -13,6 +13,7 @@ abstract class WindowsWebViewService {
         configuration: CreateConfiguration(
           userDataFolderWindows: '$temporaryDirectoryPath/webview',
           titleBarHeight: 0,
+          openMaximized: true,
         ),
       );
     } on Exception {

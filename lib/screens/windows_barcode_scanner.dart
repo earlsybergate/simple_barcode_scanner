@@ -29,18 +29,21 @@ abstract class WindowsBarcodeScanner {
     WindowsWebViewService.registerJavascriptMessageHandler(
         channelName: _channelName,
         onMessage: (name, body) {
-          if (name == "successCallback") {
-            if (body is String &&
-                body.isNotEmpty) {
+          final data = 'name: $name, body: $body';
+          onScanned(data);
 
-              onScanned(body);
-
-              WindowsWebViewService.unregisterJavascriptMessageHandler(
-                  channelName: _channelName);
-
-              WindowsWebViewService.close();
-            }
-          }
+          // if (name == "successCallback") {
+          //   if (body is String &&
+          //       body.isNotEmpty) {
+          //
+          //     onScanned(body);
+          //
+          //     WindowsWebViewService.unregisterJavascriptMessageHandler(
+          //         channelName: _channelName);
+          //
+          //     WindowsWebViewService.close();
+          //   }
+          // }
         });
 
     final url = getAssetFileUrl(asset: PackageConstant.barcodeFilePath);
