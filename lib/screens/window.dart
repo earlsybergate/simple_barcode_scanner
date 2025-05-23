@@ -67,7 +67,7 @@ class _WindowBarcodeScannerState extends State<WindowBarcodeScanner> {
   Widget build(BuildContext context) {
 
     return Scaffold(
-      appBar: _buildAppBar(controller, context, widget.cancelButtonText),
+      // appBar: _buildAppBar(controller, context, widget.cancelButtonText),
       // body: isWebViewInitialized ? Webview(
       //   controller,
       //   permissionRequested: (url, permissionKind, isUserInitiated) =>
@@ -95,6 +95,12 @@ class _WindowBarcodeScannerState extends State<WindowBarcodeScanner> {
       logs += permission
           ? "Camera permission granted"
           : "Camera permission denied";
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(logs),
+        ),
+      );
 
       return permission;
     } catch (e) {
@@ -170,10 +176,20 @@ class _WindowBarcodeScannerState extends State<WindowBarcodeScanner> {
 
       await controller.initialize();
       logs += 'Webview Controller initialized\n';
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(logs),
+        ),
+      );
 
       await controller
           .loadUrl(getAssetFileUrl(asset: PackageConstant.barcodeFilePath));
       logs += 'Webview loaded url: ${getAssetFileUrl(asset: PackageConstant.barcodeFilePath)}\n';
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(logs),
+        ),
+      );
 
       /// Listen to web to receive barcode
       controller.webMessage.listen((event) {
@@ -187,12 +203,16 @@ class _WindowBarcodeScannerState extends State<WindowBarcodeScanner> {
         }
       });
       logs += 'Webview message listener added\n';
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(logs),
+        ),
+      );
 
       setState(() {
         isWebViewInitialized = true;
       });
       logs += 'Webview initialized\n';
-
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(logs),
