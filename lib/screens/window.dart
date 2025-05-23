@@ -54,11 +54,10 @@ class _WindowBarcodeScannerState extends State<WindowBarcodeScanner> {
     controller = WebviewController();
 
     _checkCameraPermission().then((granted) {
-      debugPrint("Permission is $granted");
       isPermissionGranted = granted;
-    });
 
-    initPlatformState(controller: controller);
+      initPlatformState(controller: controller);
+    });
   }
 
   @override
