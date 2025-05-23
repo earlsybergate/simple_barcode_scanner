@@ -89,13 +89,23 @@ class _WindowBarcodeScannerState extends State<WindowBarcodeScanner> {
   }
 
   Future<bool> _checkCameraPermission() async {
-    final permission = await Permission.camera.request().isGranted;
+    try {
+      final permission = await Permission.camera.request().isGranted;
 
-    logs += permission
-        ? "Camera permission granted"
-        : "Camera permission denied";
+      logs += permission
+          ? "Camera permission granted"
+          : "Camera permission denied";
 
-    return permission;
+      return permission;
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(e.toString()),
+        ),
+      );
+
+      return false;
+    }
   }
 
   Future<WebviewPermissionDecision> _onPermissionRequested(
@@ -138,16 +148,26 @@ class _WindowBarcodeScannerState extends State<WindowBarcodeScanner> {
   }
 
   String getAssetFileUrl({required String asset}) {
-    final assetsDirectory = p.join(p.dirname(Platform.resolvedExecutable),
-        'data', 'flutter_assets', asset);
-    return Uri.file(assetsDirectory).toString();
+    try {
+      final assetsDirectory = p.join(p.dirname(Platform.resolvedExecutable),
+          'data', 'flutter_assets', asset);
+      return Uri.file(assetsDirectory).toString();
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(e.toString()),
+        ),
+      );
+
+      return "";
+    }
   }
 
   Future<void> initPlatformState(
       {required WebviewController controller}) async {
-    String? barcodeNumber;
-
     try {
+      String? barcodeNumber;
+
       await controller.initialize();
       logs += 'Webview Controller initialized\n';
 
@@ -167,20 +187,26 @@ class _WindowBarcodeScannerState extends State<WindowBarcodeScanner> {
         }
       });
       logs += 'Webview message listener added\n';
+
+      setState(() {
+        isWebViewInitialized = true;
+      });
+      logs += 'Webview initialized\n';
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(logs),
+        ),
+      );
     } catch (e) {
-      logs += 'Error initializing webview: $e\n';
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(e.toString()),
+        ),
+      );
     }
 
-    setState(() {
-      isWebViewInitialized = true;
-    });
-    logs += 'Webview initialized\n';
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(logs),
-      ),
-    );
   }
 
   _buildAppBar(
