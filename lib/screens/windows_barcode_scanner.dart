@@ -29,11 +29,18 @@ abstract class WindowsBarcodeScanner {
     WindowsWebViewService.registerJavascriptMessageHandler(
         channelName: _channelName,
         onMessage: (name, body) {
-          Logger().d('name: $name, body: $body');
+          if (name == "successCallback") {
+            if (body is String &&
+                body.isNotEmpty) {
 
-          WindowsWebViewService.unregisterJavascriptMessageHandler(
-              channelName: _channelName);
-          WindowsWebViewService.close();
+              onScanned(body);
+
+              WindowsWebViewService.unregisterJavascriptMessageHandler(
+                  channelName: _channelName);
+
+              WindowsWebViewService.close();
+            }
+          }
         });
 
     final url = getAssetFileUrl(asset: PackageConstant.barcodeFilePath);
@@ -41,7 +48,7 @@ abstract class WindowsBarcodeScanner {
   }
 
   static Future<bool> _checkCameraPermission() async {
-    return await Permission.camera.request().isGranted;
+    return await Permission.camera.status.isGranted;
   }
 
   static String getAssetFileUrl({required String asset}) {
