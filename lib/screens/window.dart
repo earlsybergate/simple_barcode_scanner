@@ -83,7 +83,15 @@ class _WindowBarcodeScannerState extends State<WindowBarcodeScanner> {
   }
 
   Future<bool> _checkCameraPermission() async {
-    return await Permission.camera.request().isGranted;
+    final permission = await Permission.camera.request().isGranted;
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('Camera Permission: $permission'),
+      ),
+    );
+
+    return permission;
   }
 
   Future<WebviewPermissionDecision> _onPermissionRequested(
