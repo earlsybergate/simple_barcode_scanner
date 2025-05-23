@@ -7,7 +7,7 @@ import 'package:simple_barcode_scanner/constant.dart';
 import 'package:simple_barcode_scanner/windows_web_view_service.dart';
 
 abstract class WindowsBarcodeScanner {
-  static const String _channelName = 'QR Scanned';
+  static const String _channelName = 'successCallback';
 
   static Future<void> scan(void Function(String) onScanned) async {
     await WindowsWebViewService.initialize();
