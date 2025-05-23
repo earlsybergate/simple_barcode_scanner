@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:simple_barcode_scanner/barcode_appbar.dart';
 import 'package:simple_barcode_scanner/enum.dart';
 import 'package:simple_barcode_scanner/screens/shared.dart';
+import 'package:simple_barcode_scanner/screens/windows_barcode_scanner.dart';
 
 export 'package:simple_barcode_scanner/barcode_appbar.dart';
 export 'package:simple_barcode_scanner/enum.dart';
@@ -228,6 +229,10 @@ class SimpleBarcodeScanner extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  static void scanBarcodeWindows(void Function(String) onScanned) {
+    WindowsBarcodeScanner.scan(onScanned);
   }
 
   /// Continuously scans barcodes and emits results through a stream.

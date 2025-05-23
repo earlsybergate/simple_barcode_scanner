@@ -2,14 +2,14 @@ import 'package:desktop_webview_window/desktop_webview_window.dart';
 import 'package:simple_barcode_scanner/directory_path_service.dart';
 
 abstract class WindowsWebViewService {
-  static Webview? _webView;
+  static Webview? webView;
 
   static Future<void> initialize() async {
     try {
       final temporaryDirectoryPath =
           await DirectoryPathService.getTemporaryDirectoryPath();
 
-      _webView = await WebviewWindow.create(
+      webView = await WebviewWindow.create(
         configuration: CreateConfiguration(
           userDataFolderWindows: '$temporaryDirectoryPath/webview',
           titleBarHeight: 0,
@@ -25,8 +25,10 @@ abstract class WindowsWebViewService {
 
   static void launch(String url) {
     try {
-      _webView?.launch(url);
-    } on Exception {}
+      webView?.launch(url);
+    } on Exception {
+      rethrow;
+    }
   }
 
   static void registerJavascriptMessageHandler({
@@ -34,7 +36,7 @@ abstract class WindowsWebViewService {
     required void Function(String name, dynamic body) onMessage,
   }) {
     try {
-      _webView?.registerJavaScriptMessageHandler(
+      webView?.registerJavaScriptMessageHandler(
         channelName,
         onMessage,
       );
@@ -47,7 +49,15 @@ abstract class WindowsWebViewService {
     required String channelName,
   }) {
     try {
-      _webView?.unregisterJavaScriptMessageHandler(channelName);
+      webView?.unregisterJavaScriptMessageHandler(channelName);
+    } on Exception {
+      rethrow;
+    }
+  }
+
+  static void close() {
+    try {
+      webView?.close();
     } on Exception {
       rethrow;
     }

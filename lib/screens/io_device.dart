@@ -1,11 +1,8 @@
-import 'dart:io';
-
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:simple_barcode_scanner/enum.dart';
 import 'package:simple_barcode_scanner/screens/barcode_controller.dart';
-import 'package:simple_barcode_scanner/screens/window.dart';
 
 import '../barcode_appbar.dart';
 import '../constant.dart';
@@ -46,45 +43,30 @@ class BarcodeScanner extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (Platform.isWindows) {
-      ///Get Window barcode Scanner UI
-      return WindowBarcodeScanner(
-        lineColor: lineColor,
-        cancelButtonText: cancelButtonText,
-        isShowFlashIcon: isShowFlashIcon,
-        scanType: scanType,
-        onScanned: onScanned,
-        appBarTitle: appBarTitle,
-        centerTitle: centerTitle,
-        delayMillis: delayMillis,
-        barcodeAppBar: barcodeAppBar,
-      );
-    } else {
-      /// Scan Android and ios barcode scanner with flutter_barcode_scanner
-      /// If onClose is not null then stream barcode otherwise scan barcode
-      /// Scan barcode for mobile devices
-      ScanMode scanMode;
-      switch (scanType) {
-        case ScanType.barcode:
-          scanMode = ScanMode.BARCODE;
-          break;
-        case ScanType.qr:
-          scanMode = ScanMode.QR;
-          break;
-        default:
-          scanMode = ScanMode.DEFAULT;
-          break;
-      }
-      onClose != null
-          ? _streamBarcodeForMobileAndTabDevices(scanMode)
-          : _scanBarcodeForMobileAndTabDevices(scanMode);
-
-      return const Scaffold(
-        body: Center(
-          child: CircularProgressIndicator(),
-        ),
-      );
+    /// Scan Android and ios barcode scanner with flutter_barcode_scanner
+    /// If onClose is not null then stream barcode otherwise scan barcode
+    /// Scan barcode for mobile devices
+    ScanMode scanMode;
+    switch (scanType) {
+      case ScanType.barcode:
+        scanMode = ScanMode.BARCODE;
+        break;
+      case ScanType.qr:
+        scanMode = ScanMode.QR;
+        break;
+      default:
+        scanMode = ScanMode.DEFAULT;
+        break;
     }
+    onClose != null
+        ? _streamBarcodeForMobileAndTabDevices(scanMode)
+        : _scanBarcodeForMobileAndTabDevices(scanMode);
+
+    return const Scaffold(
+      body: Center(
+        child: CircularProgressIndicator(),
+      ),
+    );
   }
 
   _scanBarcodeForMobileAndTabDevices(ScanMode scanMode) async {
@@ -135,6 +117,7 @@ class BarcodeScannerView extends StatelessWidget {
   final Function? onClose;
   final bool continuous;
   final ScanFormat scanFormat;
+
   const BarcodeScannerView(
       {super.key,
       this.scannerWidth,
