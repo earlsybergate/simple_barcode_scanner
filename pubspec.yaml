@@ -1,6 +1,6 @@
 name: simple_barcode_scanner
 description: simple_barcode_scanner that let you scan barcode and qr code in mobile, web and windows.
-version: 0.3.8
+version: 0.3.16
 homepage: https://github.com/CodingWithTashi/simple_barcode_scanner
 issue_tracker: https://github.com/CodingWithTashi/simple_barcode_scanner/issues
 
@@ -17,8 +17,6 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  # Flutter window webview
-  webview_windows: ^0.4.0
   # Barcode scanner for android and ios
   #flutter_barcode_scanner: ^2.0.0
   #Get assets path for window platform
@@ -28,6 +26,8 @@ dependencies:
   #Add new web package
   web: ^1.1.0
   flutter_plugin_android_lifecycle: ^2.0.24
+  desktop_webview_window: ^0.2.3
+  path_provider: ^2.1.5
 dev_dependencies:
   flutter_test:
     sdk: flutter
