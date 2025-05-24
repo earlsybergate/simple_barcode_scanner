@@ -278,7 +278,7 @@ packages:
       path: ".."
       relative: true
     source: path
-    version: "0.3.23"
+    version: "0.3.24"
   sky_engine:
     dependency: transitive
     description: flutter
@@ -359,10 +359,11 @@ packages:
   webview_windows:
     dependency: transitive
     description:
-      name: webview_windows
-      sha256: "47fcad5875a45db29dbb5c9e6709bf5c88dcc429049872701343f91ed7255730"
-      url: "https://pub.dev"
-    source: hosted
+      path: "."
+      ref: main
+      resolved-ref: "0e6be598ba23f24ab13da04aed823e5b3ab44f13"
+      url: "https://github.com/MosioKix/flutter-webview-windows.git"
+    source: git
     version: "0.4.0"
   xdg_directories:
     dependency: transitive
