@@ -49,8 +49,6 @@ class _WindowBarcodeScannerState extends State<WindowBarcodeScanner> {
   bool isPermissionGranted = false;
   bool isWebViewInitialized = false;
 
-  String logs = "";
-
   @override
   void initState() {
     super.initState();
@@ -98,12 +96,12 @@ class _WindowBarcodeScannerState extends State<WindowBarcodeScanner> {
     try {
       final permission = await Permission.camera.request().isGranted;
 
-      logs +=
+      final message =
           permission ? "Camera permission granted" : "Camera permission denied";
 
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(logs),
+          content: Text(message),
         ),
       );
 
@@ -184,7 +182,7 @@ class _WindowBarcodeScannerState extends State<WindowBarcodeScanner> {
         ),
       );
       final temporaryDirectory = await path_provider.getTemporaryDirectory();
-      WebviewController.initializeEnvironment(
+      await WebviewController.initializeEnvironment(
         userDataPath: '${temporaryDirectory.path}/webview',
       );
 
@@ -194,21 +192,18 @@ class _WindowBarcodeScannerState extends State<WindowBarcodeScanner> {
         ),
       );
       controller = WebviewController();
-      controller.initialize();
-      logs += 'Webview Controller initialized\n';
+      await controller.initialize();
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(logs),
+          content: Text('Webview Controller initialized'),
         ),
       );
 
       await controller
           .loadUrl(getAssetFileUrl(asset: PackageConstant.barcodeFilePath));
-      logs +=
-          'Webview loaded url: ${getAssetFileUrl(asset: PackageConstant.barcodeFilePath)}\n';
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(logs),
+          content: Text('Webview loaded url: ${getAssetFileUrl(asset: PackageConstant.barcodeFilePath)}'),
         ),
       );
 
@@ -223,20 +218,18 @@ class _WindowBarcodeScannerState extends State<WindowBarcodeScanner> {
           }
         }
       });
-      logs += 'Webview message listener added\n';
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(logs),
+          content: Text('Webview message listener added'),
         ),
       );
 
       setState(() {
         isWebViewInitialized = true;
       });
-      logs += 'Webview initialized\n';
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(logs),
+          content: Text('Webview initialization completed!'),
         ),
       );
     } on PlatformException catch (e) {
