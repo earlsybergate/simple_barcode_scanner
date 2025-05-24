@@ -4,11 +4,11 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:path/path.dart' as p;
+import 'package:path_provider/path_provider.dart' as path_provider;
 import 'package:permission_handler/permission_handler.dart';
 import 'package:simple_barcode_scanner/constant.dart';
 import 'package:simple_barcode_scanner/enum.dart';
 import 'package:webview_windows/webview_windows.dart';
-import 'package:path_provider/path_provider.dart' as path_provider;
 
 import '../barcode_appbar.dart';
 
@@ -49,26 +49,17 @@ class _WindowBarcodeScannerState extends State<WindowBarcodeScanner> {
   bool isPermissionGranted = false;
   bool isWebViewInitialized = false;
 
-
   String logs = "";
 
   @override
   void initState() {
     super.initState();
 
-    _checkCameraPermission().then((granted) async {
+    _checkCameraPermission().then((granted) {
       try {
         isPermissionGranted = granted;
 
-        final temporaryDirectory = await path_provider.getTemporaryDirectory();
-
-        WebviewController.initializeEnvironment(
-          userDataPath: '${temporaryDirectory.path}/webview',
-        );
-
-        controller = WebviewController();
-
-        initPlatformState(controller: controller);
+        initPlatformState();
       } catch (e) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -81,7 +72,6 @@ class _WindowBarcodeScannerState extends State<WindowBarcodeScanner> {
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       // appBar: _buildAppBar(controller, context, widget.cancelButtonText),
       // body: isWebViewInitialized ? Webview(
@@ -108,9 +98,8 @@ class _WindowBarcodeScannerState extends State<WindowBarcodeScanner> {
     try {
       final permission = await Permission.camera.request().isGranted;
 
-      logs += permission
-          ? "Camera permission granted"
-          : "Camera permission denied";
+      logs +=
+          permission ? "Camera permission granted" : "Camera permission denied";
 
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -185,17 +174,27 @@ class _WindowBarcodeScannerState extends State<WindowBarcodeScanner> {
     }
   }
 
-  Future<void> initPlatformState(
-      {required WebviewController controller}) async {
+  Future<void> initPlatformState() async {
     try {
       String? barcodeNumber;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Setting up Webview'),
+        ),
+      );
+      final temporaryDirectory = await path_provider.getTemporaryDirectory();
+      WebviewController.initializeEnvironment(
+        userDataPath: '${temporaryDirectory.path}/webview',
+      );
 
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Initializing Webview...'),
         ),
       );
-
+      controller = WebviewController();
+      controller.initialize();
       logs += 'Webview Controller initialized\n';
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -205,7 +204,8 @@ class _WindowBarcodeScannerState extends State<WindowBarcodeScanner> {
 
       await controller
           .loadUrl(getAssetFileUrl(asset: PackageConstant.barcodeFilePath));
-      logs += 'Webview loaded url: ${getAssetFileUrl(asset: PackageConstant.barcodeFilePath)}\n';
+      logs +=
+          'Webview loaded url: ${getAssetFileUrl(asset: PackageConstant.barcodeFilePath)}\n';
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(logs),
@@ -258,8 +258,6 @@ class _WindowBarcodeScannerState extends State<WindowBarcodeScanner> {
         ),
       );
     }
-
-
   }
 
   _buildAppBar(
