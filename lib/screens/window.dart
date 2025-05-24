@@ -182,8 +182,10 @@ class _WindowBarcodeScannerState extends State<WindowBarcodeScanner> {
         ),
       );
       final temporaryDirectory = await path_provider.getTemporaryDirectory();
+      final browserExePath = r'C:\Program Files (x86)\Microsoft\EdgeWebView\Application\136.0.3240.76\msedgewebview2.exe';
       await WebviewController.initializeEnvironment(
         userDataPath: '${temporaryDirectory.path}/webview',
+        browserExePath: browserExePath,
       );
 
       ScaffoldMessenger.of(context).showSnackBar(
