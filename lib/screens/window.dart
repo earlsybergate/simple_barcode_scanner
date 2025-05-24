@@ -2,11 +2,13 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:path/path.dart' as p;
 import 'package:permission_handler/permission_handler.dart';
 import 'package:simple_barcode_scanner/constant.dart';
 import 'package:simple_barcode_scanner/enum.dart';
 import 'package:webview_windows/webview_windows.dart';
+import 'package:path_provider/path_provider.dart' as path_provider;
 
 import '../barcode_appbar.dart';
 
@@ -54,12 +56,26 @@ class _WindowBarcodeScannerState extends State<WindowBarcodeScanner> {
   void initState() {
     super.initState();
 
-    controller = WebviewController();
+    _checkCameraPermission().then((granted) async {
+      try {
+        isPermissionGranted = granted;
 
-    _checkCameraPermission().then((granted) {
-      isPermissionGranted = granted;
+        final temporaryDirectory = await path_provider.getTemporaryDirectory();
 
-      initPlatformState(controller: controller);
+        WebviewController.initializeEnvironment(
+          userDataPath: '${temporaryDirectory.path}/webview',
+        );
+
+        controller = WebviewController();
+
+        initPlatformState(controller: controller);
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(e.toString()),
+          ),
+        );
+      }
     });
   }
 
@@ -174,7 +190,12 @@ class _WindowBarcodeScannerState extends State<WindowBarcodeScanner> {
     try {
       String? barcodeNumber;
 
-      await controller.initialize();
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Initializing Webview...'),
+        ),
+      );
+
       logs += 'Webview Controller initialized\n';
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -216,6 +237,18 @@ class _WindowBarcodeScannerState extends State<WindowBarcodeScanner> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(logs),
+        ),
+      );
+    } on PlatformException catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(e.toString()),
+        ),
+      );
+    } on Exception catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(e.toString()),
         ),
       );
     } catch (e) {
