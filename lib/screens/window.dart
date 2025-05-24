@@ -185,12 +185,12 @@ class _WindowBarcodeScannerState extends State<WindowBarcodeScanner> {
 
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Setting up Webview environment using Google Chrome'),
+          content: Text('Setting up Webview environment using Chrome'),
         ),
       );
       final temporaryDirectory = await path_provider.getTemporaryDirectory();
       final browserExePath =
-          'C:/Program Files/Google/Chrome/Application/chrome.exe';
+          r'C:\Program Files\Google\Chrome\Application\chrome.exe';
       await WebviewController.initializeEnvironment(
         userDataPath: '${temporaryDirectory.path}/webview2',
         browserExePath: browserExePath,
