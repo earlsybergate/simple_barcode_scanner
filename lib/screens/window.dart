@@ -183,15 +183,17 @@ class _WindowBarcodeScannerState extends State<WindowBarcodeScanner> {
         ),
       );
 
-
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Setting up Webview'),
         ),
       );
       final temporaryDirectory = await path_provider.getTemporaryDirectory();
+      final browserExePath =
+          'C:/Program Files (x86)/Microsoft/EdgeWebView/Application/136.0.3240.76/msedgewebview2.exe';
       await WebviewController.initializeEnvironment(
         userDataPath: '${temporaryDirectory.path}/webview2',
+        browserExePath: browserExePath,
       );
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -216,7 +218,8 @@ class _WindowBarcodeScannerState extends State<WindowBarcodeScanner> {
           .loadUrl(getAssetFileUrl(asset: PackageConstant.barcodeFilePath));
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Webview loaded url: ${getAssetFileUrl(asset: PackageConstant.barcodeFilePath)}'),
+          content: Text(
+              'Webview loaded url: ${getAssetFileUrl(asset: PackageConstant.barcodeFilePath)}'),
         ),
       );
 
